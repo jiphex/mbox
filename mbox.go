@@ -75,8 +75,11 @@ func ReadFile(filename string, debug bool) ([]*mail.Message, error) {
 
 func parseAndAppend(mbuf *bytes.Buffer, msgs []*mail.Message, debug bool) []*mail.Message {
 	msg, err := mail.ReadMessage(mbuf)
-	if err != nil && debug {
-		log.Print(err)
+	if err != nil {
+		if debug {
+			log.Print(err)
+		}
+		return msgs // don't append
 	}
 	return append(msgs, msg)
 }
