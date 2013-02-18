@@ -33,7 +33,7 @@ func Read(r io.Reader, debug bool) (msgs []*mail.Message, err error) {
 		if len(fs) == 3 && string(fs[0]) == "From" && lastblank {
 			// flush the previous message, if necessary
 			if mbuf != nil {
-				parseAndAppend(mbuf, msgs, debug)
+				msgs = parseAndAppend(mbuf, msgs, debug)
 			}
 			mbuf = new(bytes.Buffer)
 		} else {
@@ -54,7 +54,7 @@ func Read(r io.Reader, debug bool) (msgs []*mail.Message, err error) {
 		l, _, err = br.ReadLine()
 	}
 	if err == io.EOF {
-		parseAndAppend(mbuf, msgs, debug)
+		msgs = parseAndAppend(mbuf, msgs, debug)
 		err = nil
 	}
 	return
@@ -73,10 +73,10 @@ func ReadFile(filename string, debug bool) ([]*mail.Message, error) {
 	return msgs, err
 }
 
-func parseAndAppend(mbuf *bytes.Buffer, msgs []*mail.Message, debug bool) {
+func parseAndAppend(mbuf *bytes.Buffer, msgs []*mail.Message, debug bool) []*mail.Message {
 	msg, err := mail.ReadMessage(mbuf)
 	if err != nil && debug {
 		log.Print(err)
 	}
-	msgs = append(msgs, msg)
+	return append(msgs, msg)
 }
